@@ -25,4 +25,4 @@ dist-ssr
 
 # amplify
 .amplify
-/ampliry_outputs.json
+/amplify_outputs.json
