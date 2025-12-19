@@ -5,6 +5,7 @@ applications:
         build:
           commands:
             - npm install
+            - npx ampx pipeline-deploy --baranch $AWS_BRANCH --app-id $AWS_APP_ID
   - frontend:
       phases:
         build:
@@ -16,4 +17,4 @@ applications:
           - '/*'
       cache:
         paths:
-          - node_modules/**/*
+          - .npm//+
