@@ -3,9 +3,13 @@ import { FaArrowUp } from "react-icons/fa";
 
 interface ChatInputProps {
   sendMessage: (message: string, model: string) => void;
+  initialModel?: string;
 }
 
-export default function ChatInput({ sendMessage }: ChatInputProps) {
+export default function ChatInput({
+  sendMessage,
+  initialModel,
+}: ChatInputProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!message.trim() || !selectedModel) return;
@@ -27,7 +31,9 @@ export default function ChatInput({ sendMessage }: ChatInputProps) {
     },
   ];
   const [message, setMessage] = useState("");
-  const [selectedModel, setSelectedModel] = useState(models[0].id);
+  const [selectedModel, setSelectedModel] = useState(
+    initialModel || models[0].id,
+  );
 
   return (
     <form onSubmit={handleSubmit}>
