@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
+import ChatConversation from "./pages/ChatConversation";
 import NewChat from "./pages/NewChat";
 
 export const router = createBrowserRouter([
@@ -8,6 +9,10 @@ export const router = createBrowserRouter([
       {
         path: "new",
         Component: NewChat,
+      },
+      {
+        path: ":conversationId",
+        Component: ChatConversation,
       },
     ],
   },

@@ -1,7 +1,17 @@
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
 
-export default function ChatInput() {
+interface ChatInputProps {
+  sendMessage: (message: string, model: string) => void;
+}
+
+export default function ChatInput({ sendMessage }: ChatInputProps) {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!message.trim() || !selectedModel) return;
+    sendMessage(message, selectedModel);
+    setMessage("");
+  };
   const models = [
     {
       id: "1",
@@ -20,7 +30,7 @@ export default function ChatInput() {
   const [selectedModel, setSelectedModel] = useState(models[0].id);
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="gep-4 flex flex-col justify-between rounded-2xl border border-gray-300 p-4">
         <textarea
           name="message"
@@ -28,6 +38,14 @@ export default function ChatInput() {
           placeholder="質問を入力してください"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing) return;
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              const form = e.currentTarget.closest("form");
+              if (form) form.requestSubmit();
+            }
+          }}
         />
         <div className="flex justify-end gap-2">
           <div className="jusity-center flex items-center rounded-md text-sm">
