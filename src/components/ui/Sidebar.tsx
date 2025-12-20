@@ -1,3 +1,4 @@
+import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { sampleConversations } from "../../sampleData";
@@ -7,6 +8,7 @@ import Profile from "./Profile";
 export default function Sidebar() {
   const { conversationId } = useParams();
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const { signOut } = useAuthenticator();
 
   useEffect(() => {
     // 実際のアプリではAPIからデータを取得する
@@ -50,7 +52,10 @@ export default function Sidebar() {
       <div className="p-4">
         <Profile />
         {/** biome-ignore lint/a11y/useButtonType: <explanation> */}
-        <button className="block w-full justify-center rounded-sm bg-gray-400 p-2 text-white hover:bg-gray-500">
+        <button
+          className="block w-full justify-center rounded-sm bg-gray-400 p-2 text-white hover:bg-gray-500"
+          onClick={signOut}
+        >
           ログアウト
         </button>
       </div>
