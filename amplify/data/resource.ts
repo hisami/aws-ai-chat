@@ -22,6 +22,12 @@ export const schema = a.schema({
     })
     .identifier(["conversationId"])
     .authorization((allow) => [allow.owner()]),
+
+  HelloWorld: a
+    .query()
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function("helloWorldFunction")),
 });
 
 export const data = defineData({
