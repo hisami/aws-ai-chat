@@ -1,5 +1,6 @@
 import { a, type ClientSchema, defineData } from "@aws-amplify/backend";
-import { helloWorldFunction } from "../function/resource";
+import { bedrockChatFunction } from "../function/bedrockChat/resource";
+import { helloWorldFunction } from "../function/helloWorld/resource";
 
 export const schema = a.schema({
   Message: a
@@ -29,6 +30,16 @@ export const schema = a.schema({
     .returns(a.string())
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(helloWorldFunction)),
+
+  BedrockChat: a
+    .query()
+    .arguments({
+      prompt: a.string().required(),
+      modelId: a.string().required(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(bedrockChatFunction)),
 });
 
 export const data = defineData({
