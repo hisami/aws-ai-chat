@@ -1,4 +1,5 @@
 import { a, type ClientSchema, defineData } from "@aws-amplify/backend";
+import { helloWorldFunction } from "../function/resource";
 
 export const schema = a.schema({
   Message: a
@@ -27,7 +28,7 @@ export const schema = a.schema({
     .query()
     .returns(a.string())
     .authorization((allow) => [allow.authenticated()])
-    .handler(a.handler.function("helloWorldFunction")),
+    .handler(a.handler.function(helloWorldFunction)),
 });
 
 export const data = defineData({
