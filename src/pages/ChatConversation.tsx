@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router";
+import { callBedrockChat } from "../api/bedrock";
 import ChatInput from "../components/ui/ChatInput";
 import MessageList from "../components/ui/MessageList";
 import { sampleConversations } from "../sampleData";
-import type { Conversation } from "../types/chat";
+import type { Conversation, Message } from "../types/chat";
 
 export default function ChatConversation() {
   const { conversationId } = useParams();
@@ -11,6 +12,25 @@ export default function ChatConversation() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { state: initChatDetail } = location;
+
+  const getAIResponse = async (message: string, model: string) => {
+    const response = await callBedrockChat(message, model);
+
+    const newAssistantMessage: Message = {
+      id: `message-${self.crypto.randomUUID()}`,
+      role: "assistant",
+      content: response || "AIからの応答がありませんでした。",
+      timestamp: new Date(),
+    };
+
+    setConversation((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        messages: [...prev.messages, newAssistantMessage],
+      };
+    });
+  };
 
   useEffect(() => {
     // TODO 実際のアプリではAPIからデータを取得する
@@ -38,34 +58,23 @@ export default function ChatConversation() {
     );
   }
 
-  const sendMessage = (message: string) => {
-    const conversationIndex = sampleConversations.findIndex(
-      (c) => c.id === conversationId,
-    );
-    if (conversationIndex === -1) return;
-
-    const updatedConversation = {
-      ...sampleConversations[conversationIndex],
-      messages: [
-        ...sampleConversations[conversationIndex].messages,
-        {
-          id: `message-${self.crypto.randomUUID()}`,
-          role: "user" as const,
-          content: message,
-          timestamp: new Date(),
-        },
-        {
-          id: `message-${self.crypto.randomUUID()}`,
-          role: "assistant" as const,
-          content: "AIのダミーメッセージです。",
-          timestamp: new Date(),
-        },
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  const sendMessage = async (message: string, model: string) => {
+    const newUserMessage: Message = {
+      id: `message-${self.crypto.randomUUID()}`,
+      role: "user",
+      content: message,
+      timestamp: new Date(),
     };
-    sampleConversations[conversationIndex] = updatedConversation;
-    setConversation(updatedConversation);
+
+    setConversation((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        messages: [...prev.messages, newUserMessage],
+      };
+    });
+
+    await getAIResponse(message, model);
   };
 
   return (

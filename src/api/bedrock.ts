@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 
-export const callBedrockChat = async (modelId: string, prompt: string) => {
+export const callBedrockChat = async (prompt: string, modelId: string) => {
   try {
     const response = await apiClient.queries.BedrockChat({
       modelId,
