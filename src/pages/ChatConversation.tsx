@@ -5,6 +5,7 @@ import ChatInput from "../components/ui/ChatInput";
 import MessageList from "../components/ui/MessageList";
 import { sampleConversations } from "../sampleData";
 import type { Conversation, Message } from "../types/chat";
+import { createChatTitle } from "../utils";
 
 export default function ChatConversation() {
   const { conversationId } = useParams();
@@ -12,6 +13,7 @@ export default function ChatConversation() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { state: initChatDetail } = location;
+  const initRenderRef = useRef<boolean>(true);
 
   const getAIResponse = async (message: string, model: string) => {
     const response = await callBedrockChat(message, model);
@@ -32,15 +34,38 @@ export default function ChatConversation() {
     });
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    // TODO 実際のアプリではAPIからデータを取得する
-    const foundConversation = sampleConversations.find(
-      (c) => c.id === conversationId,
-    );
-    if (foundConversation) {
-      setConversation(foundConversation);
+    if (!conversationId) return;
+
+    if (initChatDetail) {
+      if (!initRenderRef.current) return;
+      initRenderRef.current = false;
+      const { message, model } = initChatDetail;
+      setConversation({
+        id: conversationId,
+        title: createChatTitle(message),
+        messages: [
+          {
+            id: `message-${self.crypto.randomUUID()}`,
+            role: "user",
+            content: message,
+            timestamp: new Date(),
+          },
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      getAIResponse(message, model);
+    } else {
+      // TODO 実際のアプリではAPIからデータを取得する
+      const foundConversation = sampleConversations.find(
+        (c) => c.id === conversationId,
+      );
+      setConversation(foundConversation || null);
     }
-  }, [conversationId]);
+  }, [conversationId, initChatDetail]);
 
   useEffect(() => {
     if (conversation?.messages.length) {
