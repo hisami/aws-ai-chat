@@ -2,7 +2,7 @@
 
 ## General Guidelines
 
-- Use TypeScript for all new code
+- Use TypeScript for all new code.
 - Follow consistent naming conventions
 - Write self-documenting code with clear variable and function names
 - Prefer composition over inheritance
